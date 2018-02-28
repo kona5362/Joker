@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.kona.baselibrary.ExceptionCrashHandler;
+import com.kona.baselibrary.permission.PermissionHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,14 +49,12 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void test(){
-        int isPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
-        if (isPermission == PackageManager.PERMISSION_GRANTED) {
-            //do
-        }else {
-//            1.ActivityCompat.requestPermissions();
-/* 需要API23以上           2.requestPermissions(new String[]{
-                    Manifest.permission.CALL_PHONE
-            },1);*/
-        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionHelper.requestPermissionsResult(requestCode, grantResults, this);
     }
 }
