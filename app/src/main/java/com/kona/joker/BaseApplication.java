@@ -2,6 +2,8 @@ package com.kona.joker;
 
 import android.app.Application;
 
+import com.kona.baselibrary.ExceptionCrashHandler;
+
 /**
  * Created by kona on 2018/1/25.
  */

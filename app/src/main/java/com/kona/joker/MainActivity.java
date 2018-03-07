@@ -1,18 +1,16 @@
 package com.kona.joker;
 
 import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.kona.baselibrary.ExceptionCrashHandler;
 import com.kona.baselibrary.permission.PermissionHelper;
+import com.kona.baselibrary.permission.PermissionRequestFailureEvent;
+import com.kona.baselibrary.permission.PermissionRequestSuccessedEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +23,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initData();
-        int i = 2 / 0;
+//        int i = 2 / 0;
+        testPermission();
+
     }
 
 
@@ -48,13 +48,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void test(){
-
+    private void testPermission(){
+//        方式一：
+//      PermissionHelper.requestPermissions(this,1, Manifest.permission.CALL_PHONE,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        //方式二：
+        PermissionHelper.with(this)
+                .requestCode(1)
+                .request(Manifest.permission.CALL_PHONE,Manifest.permission.WRITE_EXTERNAL_STORAGE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         PermissionHelper.requestPermissionsResult(requestCode, grantResults, this);
+    }
+
+    @PermissionRequestSuccessedEvent(requestCode = 1)
+    public void callPhone(){
+        Toast.makeText(this, "打电话！", Toast.LENGTH_SHORT).show();
+    }
+    @PermissionRequestFailureEvent(requestCode = 1)
+    public void failure(){
+        Toast.makeText(this, "全县拒绝！", Toast.LENGTH_SHORT).show();
     }
 }

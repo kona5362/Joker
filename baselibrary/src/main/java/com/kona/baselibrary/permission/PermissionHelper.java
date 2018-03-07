@@ -1,8 +1,6 @@
 package com.kona.baselibrary.permission;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -19,6 +17,44 @@ import java.util.List;
 
 public class PermissionHelper {
 
+
+    private Object mObj;
+    private int mRequestCode;
+
+    private PermissionHelper(Object obj) {
+        this.mObj = obj;
+    }
+
+    public static PermissionHelper with(Object obj){
+        return new PermissionHelper(obj);
+    }
+
+    public PermissionHelper requestCode(int requestCode) {
+        this.mRequestCode = requestCode;
+        return this;
+    }
+
+    public void request(String... permissions){
+        Activity activity = getActivity(mObj);
+        List<String> permissionList = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(activity, permission) == PackageManager.PERMISSION_DENIED) {
+                permissionList.add(permission);
+            }
+        }
+        if (permissionList.size() == 0) {
+            //执行权限允许后的方法
+            excuteRequestPermissionSuccessedEvent(mObj,mRequestCode);
+            return;
+        }
+        String[] strArr = new String[0];//给下面方法做模子用哒
+        String[] permissionArr = permissionList.toArray(strArr);
+        //请求权限
+        ActivityCompat.requestPermissions(activity, permissionArr, mRequestCode);
+    }
+
+
+
     public static void requestPermissions(Object obj, int reuqestCode, String... permissions) {
         Activity activity = getActivity(obj);
         List<String> permissionList = new ArrayList<>();
@@ -32,9 +68,10 @@ public class PermissionHelper {
             excuteRequestPermissionSuccessedEvent(obj,reuqestCode);
             return;
         }
-
+        String[] strArr = new String[0];//给下面方法做模子用哒
+        String[] permissionArr = permissionList.toArray(strArr);
         //请求权限
-        ActivityCompat.requestPermissions(activity, (String[]) permissionList.toArray(), reuqestCode);
+        ActivityCompat.requestPermissions(activity, permissionArr, reuqestCode);
     }
 
     private static void excuteRequestPermissionSuccessedEvent(Object obj, int requestCode) {
